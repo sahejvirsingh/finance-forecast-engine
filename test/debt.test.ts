@@ -11,8 +11,10 @@ describe("Debt Amortization & Payoff", () => {
 
   it("should prioritize avalanche over snowball when chosen", () => {
     const debts: Debt[] = [
-      { id: "1", name: "Credit Card", balance: 5000, interestRate: 20, minimumPayment: 100 },
-      { id: "2", name: "Car Loan", balance: 15000, interestRate: 5, minimumPayment: 300 }
+      // Snowball will target this first (lower balance).
+      { id: "1", name: "Low Balance Loan", balance: 5000, interestRate: 5, minimumPayment: 100 },
+      // Avalanche will target this first (higher interest).
+      { id: "2", name: "High Interest Loan", balance: 15000, interestRate: 20, minimumPayment: 300 }
     ];
 
     const avalanche = calculatePayoffPlan(debts, 500, "avalanche");
@@ -20,10 +22,6 @@ describe("Debt Amortization & Payoff", () => {
     
     expect(avalanche.projections.length).toBe(2);
     expect(snowball.projections.length).toBe(2);
-    
-    // Avalanche pays off the high interest one first
-    const avCC = avalanche.projections.find(p => p.debtId === "1")!;
-    const sbCC = snowball.projections.find(p => p.debtId === "1")!;
     
     // Total interest paid should be less in avalanche for this specific configuration
     expect(avalanche.totalInterestPaid).toBeLessThan(snowball.totalInterestPaid);
